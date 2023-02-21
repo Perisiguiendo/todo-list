@@ -1,0 +1,17 @@
+.footer-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  padding: 14px 28px;
+}
+
+.footer-wrapper button:not(:last-child) {
+  margin-right: 20px;
+}
+
+.footer-wrapper .active-btn {
+  border-color: #1677ff;
+  color: #1677ff;
+}

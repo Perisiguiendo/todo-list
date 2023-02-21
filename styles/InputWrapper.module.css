@@ -1,0 +1,33 @@
+.input-wrapper {
+  height: 55px;
+  width: 100%;
+  border-radius: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.input-wrapper:hover,
+.input-wrapper:focus {
+  background-color: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.input-header {
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-header .expand-icon {
+  width: 60px;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  transition: all 1s ease-in-out;
+  -webkit-transition: all 1s ease-in-out;
+  -moz-transition: all 1s ease-in-out;
+  -ms-transition: all 1s ease-in-out;
+  -o-transition: all 1s ease-in-out;
+}

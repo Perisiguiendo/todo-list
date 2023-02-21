@@ -1,0 +1,19 @@
+.list-item-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 52px;
+  padding: 18px 24px;
+  width: 100%;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.list-item-wrapper .delete {
+  position: absolute;
+  right: 24px;
+  top: 16px;
+}
+
+.list-item-wrapper .delete-content {
+  text-decoration: line-through;
+}
