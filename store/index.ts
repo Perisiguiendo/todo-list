@@ -1,5 +1,6 @@
-import { observable } from "mobx";
+import { computed, observable } from "mobx";
 import {
+  getSnapshot,
   model,
   Model,
   modelAction,
@@ -8,16 +9,16 @@ import {
   registerRootStore,
   SnapshotOutOfModel,
 } from "mobx-keystone";
+import { message } from 'antd';
 import { Context, createContext, useContext } from "react";
 
 export type toDoType = 'DONE' | 'TODO';
 
-export type types = toDoType | '__ALL__';
+export const __ALL__ = '__ALL__';
 
 export const toDoTypeMap = {
   DONE: 'DONE' as toDoType,
   TODO: 'TODO' as toDoType,
-  ALL: '__ALL__' as types,
 }
 
 export interface ToDoItemProps {
@@ -30,6 +31,11 @@ const LOCAL_KEY = 'todo-list-test-oliverpeng';
 
 @model("ToDoList")
 export class ToDoList extends Model({}) {
+  constructor(el: any) {
+    super(el);
+    this.init();
+  }
+
   @observable
   public toDoList: ToDoItemProps[] = [];
 
@@ -37,10 +43,10 @@ export class ToDoList extends Model({}) {
   public expand: Boolean = false;
 
   @observable
-  public showType: types = toDoTypeMap.ALL;
+  public showType: toDoType | String = __ALL__;
 
   @modelAction
-  public changeShowType(type: types) {
+  public changeShowType(type: toDoType | String) {
     this.showType = type;
   }
 
@@ -48,12 +54,14 @@ export class ToDoList extends Model({}) {
   public addItem(item: ToDoItemProps) {
     this.toDoList.push(item);
     this.save();
+    message.success("添加成功");
   }
 
   @modelAction
   public deleteItem(id: string) {
-    this.toDoList = [...this.toDoList.filter(v => v.id === id)];
+    this.toDoList = [...this.toDoList.filter(v => v.id !== id)];
     this.save();
+    message.success("删除成功");
   }
 
   @modelAction
@@ -64,9 +72,10 @@ export class ToDoList extends Model({}) {
   }
 
   @modelAction
-  public clearAllItem() {
-    this.toDoList = [];
+  public clearDoneItem() {
+    this.toDoList = [...this.toDoList.filter(v => v.type === toDoTypeMap.TODO)];
     this.save();
+    message.success("删除成功");
   }
 
   @modelAction
@@ -80,7 +89,7 @@ export class ToDoList extends Model({}) {
       if(!list) return;
       this.toDoList = JSON.parse(list);
     } catch (error) {
-      console.error("初始化失败")
+      console.error("初始化失败");
     }
   }
 
@@ -88,20 +97,37 @@ export class ToDoList extends Model({}) {
     try {
       localStorage.setItem(LOCAL_KEY, JSON.stringify(this.toDoList));
     } catch (error) {
-      console.error("保存失败")
+      message.error("保存失败");
     }
   }
 
-  public getList(type?: types) {
-    if(type) {
-      return this.toDoList.filter(v => v.type === type);
-    }
-
-    return this.showType in [toDoTypeMap.DONE, toDoTypeMap.TODO] ? this.toDoList.filter(v => v.type === this.showType) : this.toDoList;
+  public modify(item: ToDoItemProps, text: string) {
+    const index = this.toDoList.findIndex(v => v.id === item.id);
+    this.toDoList.splice(index, 1, {
+      ...item,
+      content: text,
+    })
   }
 
-  public getToDoItemLens(): number {    
-    return this.getList(toDoTypeMap.TODO)?.length || 0;
+  @computed
+  get getList() {
+    return this.showType === __ALL__ ? this.toDoList : this.toDoList.filter(v => v.type === this.showType);
+  }
+
+  @computed
+  get toDoItemLens(): number {    
+    return this.toDoList.filter(v => v.type === toDoTypeMap.TODO)?.length || 0;
+  }
+
+  @computed
+  get doneItemLens(): number {    
+    return this.toDoList.filter(v => v.type === toDoTypeMap.DONE)?.length || 0;
+  }
+
+  public getToDoListSnapshot() {
+    const todoSnapshot = getSnapshot(this);
+    console.log('todoSnapshot', todoSnapshot);
+    
   }
 }
 

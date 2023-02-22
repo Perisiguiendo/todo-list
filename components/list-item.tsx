@@ -6,8 +6,9 @@ import { useHover } from "ahooks";
 import { observer } from "mobx-react-lite";
 import styles from "styles/ListItem.module.css";
 import classnames from "classnames";
+import dynamic from "next/dynamic";
 
-export const ListItem = observer((item: ToDoItemProps) => {
+const ListItem = observer((item: ToDoItemProps) => {
   const store = useStore();
   const ref = useRef<HTMLDivElement>(null);
   const isHover = useHover(ref);
@@ -18,7 +19,10 @@ export const ListItem = observer((item: ToDoItemProps) => {
 
   return (
     <div ref={ref} className={styles["list-item-wrapper"]}>
-      <Checkbox onChange={handleChange}>
+      <Checkbox
+        onChange={handleChange}
+        checked={item.type === toDoTypeMap.DONE}
+      >
         <span
           className={classnames({
             [styles["delete-content"]]: item.type === toDoTypeMap.DONE,
@@ -26,13 +30,19 @@ export const ListItem = observer((item: ToDoItemProps) => {
         >
           {item.content}
         </span>
-        <span>{item.type}</span>
-        {isHover && (
-          <span className={styles["delete"]}>
-            <CloseOutlined color="red" size={22} />
-          </span>
-        )}
       </Checkbox>
+      {isHover && (
+        <span
+          className={styles["delete"]}
+          onClick={() => store.deleteItem(item.id)}
+        >
+          <CloseOutlined size={22} style={{ color: "#d72929" }} />
+        </span>
+      )}
     </div>
   );
+});
+
+export default dynamic(() => Promise.resolve(ListItem), {
+  ssr: false,
 });

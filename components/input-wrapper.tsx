@@ -5,8 +5,9 @@ import { useStore } from "@/store";
 import { v4 } from "uuid";
 import styles from "styles/InputWrapper.module.css";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
+import dynamic from "next/dynamic";
 
-export const InputWrapper = observer(() => {
+const InputWrapper = observer(() => {
   const [content, setContent] = useState<string>("");
 
   const store = useStore();
@@ -45,4 +46,8 @@ export const InputWrapper = observer(() => {
       />
     </div>
   );
+});
+
+export default dynamic(() => Promise.resolve(InputWrapper), {
+  ssr: false,
 });

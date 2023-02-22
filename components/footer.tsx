@@ -1,14 +1,15 @@
 import React from "react";
 import { Button } from "antd";
-import { toDoTypeMap, useStore } from "@/store";
+import { toDoTypeMap, useStore, __ALL__ } from "@/store";
 import { observer } from "mobx-react-lite";
 import styles from "styles/Footer.module.css";
 import classNames from "classnames";
+import dynamic from "next/dynamic";
 
 const btnDataArr = [
   {
     text: "全部",
-    value: toDoTypeMap.ALL,
+    value: __ALL__,
   },
   {
     text: "已完成",
@@ -20,11 +21,11 @@ const btnDataArr = [
   },
 ];
 
-export const Footer = observer(() => {
+const Footer = observer(() => {
   const store = useStore();
   return (
     <div className={styles["footer-wrapper"]}>
-      <div>共 {store.getToDoItemLens()} 件代办事项</div>
+      <div>共 {store.toDoItemLens} 件代办事项</div>
       <div>
         {btnDataArr.map((v, index) => (
           <Button
@@ -33,9 +34,6 @@ export const Footer = observer(() => {
             })}
             key={index}
             onClick={() => {
-              console.log("====================================");
-              console.log("xxxx");
-              console.log("====================================");
               store.changeShowType(v.value);
             }}
           >
@@ -44,8 +42,16 @@ export const Footer = observer(() => {
         ))}
       </div>
       <div>
-        <Button type="link">清除已完成事项</Button>
+        {store.doneItemLens > 0 && (
+          <Button type="link" onClick={() => store.clearDoneItem()}>
+            清除已完成事项
+          </Button>
+        )}
       </div>
     </div>
   );
+});
+
+export default dynamic(() => Promise.resolve(Footer), {
+  ssr: false,
 });

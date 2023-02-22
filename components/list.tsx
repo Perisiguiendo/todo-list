@@ -1,13 +1,12 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { observer } from "mobx-react-lite";
 import { ToDoItemProps, useStore } from "@/store";
-import { ListItem } from "./list-item";
+import ListItem from "./list-item";
 import styles from "styles/List.module.css";
+import dynamic from "next/dynamic";
 
-export const List = observer(() => {
+const List = observer(() => {
   const store = useStore();
-
-  const list = useMemo(() => store.getList(), [store]);
 
   return (
     <>
@@ -15,11 +14,15 @@ export const List = observer(() => {
         <></>
       ) : (
         <div className={styles["list-body"]}>
-          {list.map((v: ToDoItemProps) => (
+          {store.getList.map((v: ToDoItemProps) => (
             <ListItem key={v.id} {...v} />
           ))}
         </div>
       )}
     </>
   );
+});
+
+export default dynamic(() => Promise.resolve(List), {
+  ssr: false,
 });

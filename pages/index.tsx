@@ -1,18 +1,13 @@
 import Head from "next/head";
 import styles from "@/styles/Home.module.css";
-import { InputWrapper } from "components/input-wrapper";
-import { List } from "components/list";
-import { Footer } from "components/footer";
+import InputWrapper from "components/input-wrapper";
+import List from "components/list";
+import Footer from "components/footer";
 import { getToDoListStore, StoreContext } from "@/store";
-import { useMount } from "ahooks";
+import { Button } from "antd";
 
 function Home() {
   const store = getToDoListStore();
-
-  useMount(() => {
-    store.init();
-  });
-
   return (
     <>
       <Head>
@@ -26,6 +21,14 @@ function Home() {
           <InputWrapper />
           <List />
           <Footer />
+          <br />
+          <Button
+            onClick={() => {
+              store.getToDoListSnapshot();
+            }}
+          >
+            snapshots
+          </Button>
         </main>
       </StoreContext.Provider>
     </>
