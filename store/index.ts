@@ -1,21 +1,12 @@
-import { computed, observable } from "mobx";
+import { observable } from "mobx";
 import {
-  applySnapshot,
-  getSnapshot,
   model,
   Model,
   modelAction,
   ModelCreationData,
   ModelData,
-  onPatches,
-  prop,
   registerRootStore,
-  setGlobalConfig,
-  SnapshotOutOf,
   SnapshotOutOfModel,
-  UndoManager,
-  undoMiddleware,
-  withoutUndo,
 } from "mobx-keystone";
 import { Context, createContext, useContext } from "react";
 
@@ -105,7 +96,7 @@ export class ToDoList extends Model({}) {
     if(type) {
       return this.toDoList.filter(v => v.type === type);
     }
-    
+
     return this.showType in [toDoTypeMap.DONE, toDoTypeMap.TODO] ? this.toDoList.filter(v => v.type === this.showType) : this.toDoList;
   }
 
