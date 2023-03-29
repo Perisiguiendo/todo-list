@@ -4,7 +4,8 @@ import InputWrapper from "components/input-wrapper";
 import List from "components/list";
 import Footer from "components/footer";
 import { getToDoListStore, StoreContext } from "@/store";
-import { Button } from "antd";
+import { LoadingOutlined } from "@ant-design/icons";
+import Tools from "@/components/tools";
 
 function Home() {
   const store = getToDoListStore();
@@ -18,17 +19,16 @@ function Home() {
       </Head>
       <StoreContext.Provider value={store}>
         <main className={styles.main}>
-          <InputWrapper />
-          <List />
-          <Footer />
-          <br />
-          <Button
-            onClick={() => {
-              store.getToDoListSnapshot();
-            }}
-          >
-            snapshots
-          </Button>
+          {store.loading ? (
+            <LoadingOutlined style={{ fontSize: 24 }} spin />
+          ) : (
+            <>
+              <Tools />
+              <InputWrapper />
+              <List />
+              <Footer />
+            </>
+          )}
         </main>
       </StoreContext.Provider>
     </>

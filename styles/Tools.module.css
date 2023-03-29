@@ -1,0 +1,29 @@
+.tools-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.tools-wrapper .item {
+  padding: 10px;
+  background-color: rgba(0, 0, 0, 15%);
+  cursor: pointer;
+}
+
+.tools-wrapper .item:hover,
+.tools-wrapper .item:active {
+  background-color: rgba(255, 255, 255, 35%);
+}
+
+.tools-wrapper .item:first-child {
+  border-radius: 10px 0 0 10px;
+  border-right: 2px solid rgba(255, 255, 255, 35%);
+}
+
+.tools-wrapper .item:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+.tools-wrapper .item-disabled {
+  cursor: not-allowed;
+}

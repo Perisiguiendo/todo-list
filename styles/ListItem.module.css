@@ -15,6 +15,13 @@
   cursor: pointer;
 }
 
+.list-item-wrapper .edit {
+  position: absolute;
+  right: 64px;
+  top: 16px;
+  cursor: pointer;
+}
+
 .list-item-wrapper .delete-content {
   text-decoration: line-through;
 }

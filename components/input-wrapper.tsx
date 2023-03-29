@@ -4,7 +4,7 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "@/store";
 import { v4 } from "uuid";
 import styles from "styles/InputWrapper.module.css";
-import { DownOutlined, UpOutlined } from "@ant-design/icons";
+import { DownOutlined } from "@ant-design/icons";
 import dynamic from "next/dynamic";
 
 const InputWrapper = observer(() => {
@@ -33,7 +33,12 @@ const InputWrapper = observer(() => {
   return (
     <div className={styles["input-header"]}>
       <div className={styles["expand-icon"]} onClick={handleExpand}>
-        {store.expand ? <UpOutlined /> : <DownOutlined />}
+        <DownOutlined
+          rotate={store.expand ? 180 : 0}
+          style={{
+            transform: "1s all ease-in",
+          }}
+        />
       </div>
       <Input
         value={content}

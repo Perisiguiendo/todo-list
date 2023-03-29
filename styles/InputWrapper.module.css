@@ -7,7 +7,7 @@
 
 .input-wrapper:hover,
 .input-wrapper:focus {
-  background-color: #fff;
+  background-color: #ffffff;
   border-bottom: 1px solid rgba(0, 0, 0, 0.06);
 }
 
@@ -30,4 +30,16 @@
   -moz-transition: all 1s ease-in-out;
   -ms-transition: all 1s ease-in-out;
   -o-transition: all 1s ease-in-out;
+}
+
+.input-wrapper .expand-icon-up {
+  transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  -moz-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+}
+
+.anticon-down svg {
+  transition: transform 1s ease-in-out;
 }

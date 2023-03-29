@@ -3,11 +3,14 @@ import {
   getSnapshot,
   model,
   Model,
+  prop,
   modelAction,
   ModelCreationData,
   ModelData,
   registerRootStore,
   SnapshotOutOfModel,
+  UndoManager,
+  undoMiddleware,
 } from "mobx-keystone";
 import { message } from 'antd';
 import { Context, createContext, useContext } from "react";
@@ -29,21 +32,18 @@ export interface ToDoItemProps {
 
 const LOCAL_KEY = 'todo-list-test-oliverpeng';
 
-@model("ToDoList")
-export class ToDoList extends Model({}) {
-  constructor(el: any) {
-    super(el);
-    this.init();
-  }
-
+@model("ToDoApp/todoList")
+export class ToDoList extends Model({
+  toDoList: prop<ToDoItemProps[]>(() => []),
+}) {
   @observable
-  public toDoList: ToDoItemProps[] = [];
-
-  @observable
-  public expand: Boolean = false;
+  public expand: boolean = false;
 
   @observable
   public showType: toDoType | String = __ALL__;
+
+  @observable
+  public loading: boolean = false;
 
   @modelAction
   public changeShowType(type: toDoType | String) {
@@ -65,6 +65,12 @@ export class ToDoList extends Model({}) {
   }
 
   @modelAction
+  public editItem(id: string, content: string) {
+    const index = this.toDoList.findIndex(v => v.id === id);
+    this.toDoList[index].content = content;
+  }
+
+  @modelAction
   public transformStatus(item: ToDoItemProps) {
     const index = this.toDoList.findIndex(v => v.id === item.id);
     this.toDoList[index].type = item.type === toDoTypeMap.DONE ? toDoTypeMap.TODO : toDoTypeMap.DONE;
@@ -81,16 +87,6 @@ export class ToDoList extends Model({}) {
   @modelAction
   public changeExpand(sign?: boolean) {
     this.expand = sign && (typeof sign) === "boolean" ? sign : !this.expand;
-  }
-
-  public init() {
-    try {
-      const list = localStorage.getItem(LOCAL_KEY);
-      if(!list) return;
-      this.toDoList = JSON.parse(list);
-    } catch (error) {
-      console.error("初始化失败");
-    }
   }
 
   public save() {
@@ -115,31 +111,41 @@ export class ToDoList extends Model({}) {
   }
 
   @computed
-  get toDoItemLens(): number {    
+  get toDoItemLens(): number {
     return this.toDoList.filter(v => v.type === toDoTypeMap.TODO)?.length || 0;
   }
 
   @computed
-  get doneItemLens(): number {    
+  get doneItemLens(): number {
     return this.toDoList.filter(v => v.type === toDoTypeMap.DONE)?.length || 0;
   }
 
   public getToDoListSnapshot() {
     const todoSnapshot = getSnapshot(this);
     console.log('todoSnapshot', todoSnapshot);
-    
+
   }
 }
 
 export function createToDoListStore(): ToDoList {
-  const store = new ToDoList({});
+  let list;
+  try {
+    const toDos = localStorage.getItem(LOCAL_KEY);
+    list = toDos ? JSON.parse(toDos) : [];
+  } catch (error) {
+    console.error("初始化失败", error);
+  }
+
+  const store = new ToDoList({
+    toDoList: list
+  });
   registerRootStore(store);
   return store;
 }
 
 let rootStore: ToDoList | null = null;
 export function getToDoListStore(): ToDoList {
-  if(!rootStore) {
+  if (!rootStore) {
     rootStore = createToDoListStore();
   }
   return rootStore;
@@ -149,10 +155,18 @@ export const StoreContext = createContext<ToDoList | null>(null) as Context<ToDo
 
 export function useStore() {
   const store = useContext(StoreContext);
-  if(!store) {
+  if (!store) {
     throw new Error("Store cannot be null, please add a context provider");
   }
   return store;
+}
+
+let undoManager: UndoManager | null = null;
+export function getUndoManager(): UndoManager {
+  if (undoManager == null) {
+    undoManager = undoMiddleware(getToDoListStore());
+  }
+  return undoManager;
 }
 
 export type StoreSnapshot = SnapshotOutOfModel<ToDoList>;
